@@ -1,5 +1,4 @@
 # Mixup Domain Adaptations for Dynamic Remaining Useful Life Predictions (MDAN) 
-#### *by: Muhammad Tanzil Furqon, Mahardhika Pratama, Lin Liu, Kutluyil Dogancay, and Habibullah Habibullah*
 
 The code is based on the CADA framework that taken from https://github.com/mohamedr002/CADA
 
