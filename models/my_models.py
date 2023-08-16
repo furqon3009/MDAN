@@ -46,7 +46,6 @@ class CNN_RUL(nn.Module):
         features = self.encoder(src)
         predictions = self.regressor(features)
         return predictions, features
-#cnn_model=CNN_RUL(14,30,0.5)
 
 
 """ LSTM Model """
@@ -77,12 +76,11 @@ class LSTM_RUL(nn.Module):
         # cell = [n layers * n directions, batch size, hid dim]
 
         encoder_outputs, (hidden, cell) = self.encoder(src)
-#         encoder_outputs = F.dropout(torch.relu(encoder_outputs), p=0.5, training=self.training)
         # select the last hidden state as a feature
         features = encoder_outputs[:, -1:].squeeze()
         predictions = self.regressor(features)
         return predictions, features
-# model=LSTM_RUL(14, 32, 5, 0.5, True, device)
+
 
 class Mixup_RUL(nn.Module):
     def __init__(self, input_dim, hidden_dim, n_layers, dropout, bid, device):
@@ -133,7 +131,6 @@ class Mixup_RUL(nn.Module):
         encoder_outputs, (hidden, cell) = self.encoder(src)
 #         encoder_outputs = F.dropout(torch.relu(encoder_outputs), p=0.5, training=self.training)
         # select the last hidden state as a feature
-        #lbd = torch.rand(1,1)
 
         features = encoder_outputs[:, -1:].squeeze()
         predictions = self.regressor(features)
@@ -142,24 +139,11 @@ class Mixup_RUL(nn.Module):
         return predictions, features
 
     def forward_regressor_only(self, features):
-        # input shape [batch_size, seq_length, input_dim]
-        # outputs = [batch size, src sent len,  hid dim * n directions]
-        # hidden = [n layers * n directions, batch size, hid dim]
-        # cell = [n layers * n directions, batch size, hid dim]
-
-        #encoder_outputs, (hidden, cell) = self.encoder(src)
-#         encoder_outputs = F.dropout(torch.relu(encoder_outputs), p=0.5, training=self.training)
-        # select the last hidden state as a feature
-        #lbd = torch.rand(1,1)
-
-#         features = encoder_outputs[:, -1:].squeeze()
         predictions = self.regressor(features)
 
         return predictions
 
     def forward_regressor2(self, src2):
-        
-        #print('regressor2')
         self.set_hidden_dim2(30)
         self.set_output_dim(14)
         encoder_outputs, (hidden, cell) = self.encoder(src2)
@@ -172,17 +156,4 @@ class Mixup_RUL(nn.Module):
 
         return predictions
 
-class Discriminator(nn.Module):
-    def __init__(self, hidden_dims,bid):
-        super(Discriminator, self).__init__()
-        self.layer = nn.Sequential(
-            nn.Linear(hidden_dims+hidden_dims*self.bid, hidden_dims),
-            nn.ReLU(),
-            nn.Linear(hidden_dims, hidden_dims),
-            nn.ReLU(),
-            nn.Linear(hidden_dims, 1),
-            nn.LogSoftmax() )
-    def forward(self, input):
-        out = self.layer(input)
-        return out
 
