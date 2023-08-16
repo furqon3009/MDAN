@@ -40,6 +40,5 @@ We used NASA turbofan engines dataset
 ## Contact
 For any issues/questions regarding the paper or reproducing the results, please contact me.   
 Muhammad Tanzil Furqon    
-School of Computer Science and Engineering (SCSE),   
-University of South Australia (UniSA), Australia.   
+STEM, University of South Australia (UniSA), Australia.   
 Email: muhammad_tanzil.furqon{at}mymail.unisa.edu.au   
