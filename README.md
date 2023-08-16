@@ -33,4 +33,3 @@ We used NASA turbofan engines dataset
 ## Train the target domain model
 - run python main_pretrain_target.py
 
-  
