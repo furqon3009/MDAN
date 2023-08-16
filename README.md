@@ -33,11 +33,4 @@ We used NASA turbofan engines dataset
 ## Train the target domain model
 - run python main_pretrain_target.py
 
-
-
-
-## Contact
-For any issues/questions regarding the paper or reproducing the results, please contact me.   
-Muhammad Tanzil Furqon    
-STEM, University of South Australia (UniSA), Australia.   
-Email: muhammad_tanzil.furqon{at}mymail.unisa.edu.au   
+  
