@@ -162,10 +162,17 @@ def train_mix_tgt(model, tgt_train_dl, optimizer, criterion, config, device, alp
         pred, feat = model(src)
 
         pseudo_labels = pred.squeeze()
-        inputs_mixup = lbd * inputs + (1-lbd) * inputs
-        labels_mixup = lbd * labels + (1-lbd) * pseudo_labels
 
-        feat_mixup = lbd * feat + (1-lbd) * feat
+        idx = torch.randperm(feat.shape[0])
+        
+        feat_j = feat[idx]
+        inputs_j = inputs[idx]
+        pseudo_labels_j = pseudo_labels[idx]
+
+        inputs_mixup = lbd * inputs + (1-lbd) * inputs_j
+        labels_mixup = lbd * pseudo_labels + (1-lbd) * pseudo_labels_j
+
+        feat_mixup = lbd * feat + (1-lbd) * feat_j
         pred_mixup = model.forward_regressor_only(feat_mixup)
 
         rul_loss_tgt_or = criterion(pred.squeeze(), pseudo_labels)
