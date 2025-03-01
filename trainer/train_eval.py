@@ -145,30 +145,36 @@ def train_mix_inter(model, src_train_dl, tgt_train_dl, optimizer, criterion, con
 
     return epoch_loss / num_iter, epoch_score, pred, labels, lbd_mix
 
-def train_mix_tgt(model, tgt_train_dl, optimizer, criterion, config, device, alpha4, alpha5, lbd):
+def train_mix_tgt(model, src_train_dl, tgt_train_dl, optimizer, criterion, config, device, alpha4, alpha5, lbd):
     model.train()
     epoch_loss = 0
     epoch_score = 0
     temp = 0.05
+    batch_iterator = zip(src_train_dl, cycle(tgt_train_dl))
     num_iter = len(tgt_train_dl)
 
     i = 0
     #train source
-    for inputs, labels in tgt_train_dl:
+    for source, target in batch_iterator :
+         
+        inputs, labels = source
+        inputs_tgt, labels_tgt = target
+    
         src = inputs.to(device)
+        src_tgt = inputs_tgt.to(device)
+
+        if config['permute']==True:
+            src = src.permute(0, 2, 1).to(device) # permute for CNN model
         labels = labels.to(device)
         optimizer.zero_grad()
-        #forward
+        # forward
         pred, feat = model(src)
+        pred_tgt, feat_tgt = model(src_tgt)
 
         pseudo_labels = pred.squeeze()
+        labels_mixup = lbd * labels + (1-lbd) * pseudo_labels
 
-        idx = torch.randperm(feat.shape[0])
-        
-        feat_j = feat[idx]
-        pseudo_labels_j = pseudo_labels[idx]
-        labels_mixup = lbd * pseudo_labels + (1-lbd) * pseudo_labels_j
-        feat_mixup = lbd * feat + (1-lbd) * feat_j
+        feat_mixup = lbd * feat + (1-lbd) * feat_tgt
         pred_mixup = model.forward_regressor_only(feat_mixup)
 
         rul_loss_tgt_or = criterion(pred.squeeze(), pseudo_labels)
@@ -176,7 +182,7 @@ def train_mix_tgt(model, tgt_train_dl, optimizer, criterion, config, device, alp
 
         #loss target
         rul_loss = alpha4 * rul_loss_tgt_or + alpha5 * rull_loss_tgt_mix
-        score = scoring_func(pred.squeeze() - labels)
+        score = scoring_func(pred.squeeze() - labels_tgt)
 
         rul_loss.backward()
         if (config['model_name']=='LSTM'):
@@ -187,7 +193,7 @@ def train_mix_tgt(model, tgt_train_dl, optimizer, criterion, config, device, alp
         epoch_loss += rul_loss.item()
         epoch_score += score
 
-    return epoch_loss / len(tgt_train_dl), epoch_score, pred, labels
+    return epoch_loss / len(tgt_train_dl), epoch_score, pred, labels_tgt
 
 
 def evaluate(model, test_dl, criterion, config,device):

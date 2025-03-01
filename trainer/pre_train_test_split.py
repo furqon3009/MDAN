@@ -168,7 +168,7 @@ def train_target(model, src_id, tgt_id, config, params, my_dataset):
     for epoch in range(hyper['epochs']):
         start_time = time.time()
         
-        train_loss, train_score, train_feat, train_labels = train_mix_tgt(target_model, tgt_train_dl, optimizer, criterion, config, device, 
+        train_loss, train_score, train_feat, train_labels  = train_mix_tgt(target_model, src_train_dl, tgt_train_dl, optimizer, criterion, config, device, 
             hyper['alpha4'], hyper['alpha5'], lbd)
         
         scheduler.step()
