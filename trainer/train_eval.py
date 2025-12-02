@@ -171,7 +171,7 @@ def train_mix_tgt(model, src_train_dl, tgt_train_dl, optimizer, criterion, confi
         pred, feat = model(src)
         pred_tgt, feat_tgt = model(src_tgt)
 
-        pseudo_labels = pred.squeeze()
+        pseudo_labels = pred_tgt.squeeze()
         labels_mixup = lbd * labels + (1-lbd) * pseudo_labels
 
         feat_mixup = lbd * feat + (1-lbd) * feat_tgt
